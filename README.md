@@ -3,9 +3,9 @@
   <a href="https://github.com/Side-Track/sidetrack-vflo-back" target="blank">SideTrack - VFLO Project</a>
 </p>
 
-## Description
-
-Nest.js Study Note
+## Introduction
+This Repo for my NestJS practice and Test.
+Also, This md file has a information about NestJS tutorial
 
 ## Installation
 
