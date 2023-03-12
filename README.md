@@ -1,5 +1,5 @@
 ## Introduction
-### This Repo for [JangLuna](https://github.com/JangLuna) 's NestJS practice and Test.
+### This Repo for [Phantola](https://github.com/Phantola) 's NestJS practice and Test.
 
 ### Also, This md file has a information about NestJS tutorial
 
