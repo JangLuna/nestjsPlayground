@@ -1,4 +1,4 @@
-## Introduction
+# Introduction
 ### This Repo for [Phantola](https://github.com/Phantola) 's NestJS practice and Test.
 
 ### Also, This md file has a information about NestJS tutorial
@@ -72,6 +72,9 @@
 이렇게 구성되어 있다.
 앞으로 대부분의 작업은 _src_ 내부에서 이루어진다.
 
+---
+
+
 ## NestJS Module?
 
 ### Module 이란?
@@ -108,6 +111,8 @@ NestJS가 `애플리케이션 구조를 구성하는 단위`이다.
   })
   export class AppMoudle {}
 ```
+
+---
 
 ## NestJS Controller?
 
@@ -157,6 +162,8 @@ export class BoardsModule {}
 CLI 를 이용하여 컨트롤러를 생성하는 순서는 다음과 같다.
 
 > boards 폴더를 찾기 -> 폴더 내부에 controller 파일 생성 및 module 파일 찾기 -> 모듈에 컨트롤러 등록
+
+---
 
 ## NestJS Service?
 
@@ -227,6 +234,9 @@ export class BoardsController {
 ```
 
 짧게 줄일 수 있는 이유는 private 키워드를 사용하면 타입스크립트가 멤버 요소로 묵시적 처리한다.
+
+---  
+
 
 ## NestJS Model?
 
@@ -322,6 +332,9 @@ createBoard(@Body createBoardDto: CreateBoardDto): Board {
 }
 ```
 
+---
+
+
 ## NestJS Pipe?
 
 ### Pipe 란?
@@ -410,284 +423,333 @@ export class BoardStatusValidationPipe implements PipeTransform {
 	}
 }
 ```
+---
 
 # Develop with Database
+<details>
+  <summary><h2>TypeORM<h2></summary>
 
-<detail>
-  <summary><h3>TypeORM</h3></summary>
+  ### ORM 이란?
 
-### ORM 이란?
+  객체와 관계형 데이터베이스의 데이터를 자동으로 변형 및 연결하는 작업.
 
-객체와 관계형 데이터베이스의 데이터를 자동으로 변형 및 연결하는 작업.
+  OOP 프로그래밍은 `클래스`를,
+  RDBMS는 `테이블`을 사용함
+  -> 객체 모델과 관계형 모델 간의 불일치가 발생한다.
 
-OOP 프로그래밍은 `클래스`를,
-RDBMS는 `테이블`을 사용함
--> 객체 모델과 관계형 모델 간의 불일치가 발생한다.
+  이 작업을 쉽게 하기 위해 TypeORM 을 사용한다.
 
-이 작업을 쉽게 하기 위해 TypeORM 을 사용한다.
+  ### TypeORM 사용 시 이점
 
-### TypeORM 사용 시 이점
+  - 모델 기반으로 DB table 체계를 자동으로 생성
+  - DB에서 개체를 쉽게 CRUD 할 수 있음.
+  - 테이블간 매핑( 1:1, 1:N, N:N) 등을 쉽게 만든다.
+  - CLI 명령을 제공함
+  - 간단한 코딩으로 ORM 사용 가능하며, 다른 모듈과의 호환성이 높다.
 
-- 모델 기반으로 DB table 체계를 자동으로 생성
-- DB에서 개체를 쉽게 CRUD 할 수 있음.
-- 테이블간 매핑( 1:1, 1:N, N:N) 등을 쉽게 만든다.
-- CLI 명령을 제공함
-- 간단한 코딩으로 ORM 사용 가능하며, 다른 모듈과의 호환성이 높다.
+  ### TypeORM 사용하기 전 작업
 
-### TypeORM 사용하기 전 작업
+  모듈 몇가지를 설치한다.
 
-모듈 몇가지를 설치한다.
+  ```bash
+    # typeorm 모듈인 typeorm
+    # 사용하고자 하는 DB 모듈 ex)mysql2, mysql, pg 등
+    # NestJS 에서 TypeORM 연동 모듈 @nestjs/typeorm
 
-```bash
-  # typeorm 모듈인 typeorm
-  # 사용하고자 하는 DB 모듈 ex)mysql2, mysql, pg 등
-  # NestJS 에서 TypeORM 연동 모듈 @nestjs/typeorm
+    $ npm install [mysql, pg... 중 선택] typeorm @nestjs/typeorm --save
 
-  $ npm install [mysql, pg... 중 선택] typeorm @nestjs/typeorm --save
+    # TypeORM documentation
+    # https://docs.nestjs.com/techniques/database
+  ```
 
-  # TypeORM documentation
-  # https://docs.nestjs.com/techniques/database
-```
+  ### TypeORM 을 애플리케이션과 연결하기
 
-### TypeORM 을 애플리케이션과 연결하기
+  1. 설정 파일을 생성하자. 예시에서 파일 이름은 _typeorm.config.ts_ 이다.
 
-1. 설정 파일을 생성하자. 예시에서 파일 이름은 _typeorm.config.ts_ 이다.
+  ```bash
+    # 현재 디렉토리 : 루트디렉토리
+    $ cd src
+    $ mkdir configs
+    $ touch typeorm.config.ts
+  ```
 
-```bash
-  # 현재 디렉토리 : 루트디렉토리
-  $ cd src
-  $ mkdir configs
-  $ touch typeorm.config.ts
-```
+  2. _typeorm.config.ts_ 를 작성하자.
 
-2. _typeorm.config.ts_ 를 작성하자.
+  ```ts
+  import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-```ts
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+  export const typeORMConfig: TypeOrmModuleOptions = {
+    //DataBase Type
+    type: 'mariadb',
+    host: 'db address',
+    port: 3306,
+    username: 'username',
+    password: 'password',
+    database: 'database name',
 
-export const typeORMConfig: TypeOrmModuleOptions = {
-	//DataBase Type
-	type: 'mariadb',
-	host: 'db address',
-	port: 3306,
-	username: 'username',
-	password: 'password',
-	database: 'database name',
+    //Entities to be loaded for this connections
+    entities: [__dirname + '/../**/*.entity.{js,ts}'],
 
-	//Entities to be loaded for this connections
-	entities: [__dirname + '/../**/*.entity.{js,ts}'],
+    synchronize: true,
+  };
+  ```
 
-	synchronize: true,
-};
-```
+  > 위의 객체의 synchronize 옵션은 production mode 에서 false 로 하자.
+  > true 값을 주면 애플리케이션 재시작마다 엔티티 내부에서 수정된 컬럼길이, 타입, 변경 값 등을 포함하여 테이블을 drop하고 재생성함
 
-> 위의 객체의 synchronize 옵션은 production mode 에서 false 로 하자.
-> true 값을 주면 애플리케이션 재시작마다 엔티티 내부에서 수정된 컬럼길이, 타입, 변경 값 등을 포함하여 테이블을 drop하고 재생성함
+  > entity를 생성 시 마다 배열에 넣을 수 있지만, 위 처럼 작성하면 자동으로 모든 엔티티 포함하게 됨.
+  > entity를 이용해 테이블을 생성하기 때문에 엔티티 파일이 어디 있는지 설정한다.
 
-> entity를 생성 시 마다 배열에 넣을 수 있지만, 위 처럼 작성하면 자동으로 모든 엔티티 포함하게 됨.
-> entity를 이용해 테이블을 생성하기 때문에 엔티티 파일이 어디 있는지 설정한다.
+  3. 루트 모듈에서 Import 해주자
 
-3. 루트 모듈에서 Import 해주자
+  ```ts
+  @Module({
+    imports: [
+      // forRoot 내에 넣은 설정은 모든 서브모듈에 다 적용됨
+      TypeOrmModule.forRoot(typeORMConfig),
+      BoardsModule,
+    ],
+  })
+  export class AppModule {}
+  ```
 
-```ts
-@Module({
-	imports: [
-		// forRoot 내에 넣은 설정은 모든 서브모듈에 다 적용됨
-		TypeOrmModule.forRoot(typeORMConfig),
-		BoardsModule,
-	],
-})
-export class AppModule {}
-```
+  ## NestJS Entity
 
-## NestJS Entity
+  ### Entity 란?
 
-### Entity 란?
+  데이터베이스 테이블의 추상모델이다.
 
-데이터베이스 테이블의 추상모델이다.
+  NestJS 에서는 `@Entity` 데코레이터를 사용한 클래스를 말한다.
 
-NestJS 에서는 `@Entity` 데코레이터를 사용한 클래스를 말한다.
+  ### Entity 생성하기
 
-### Entity 생성하기
+  모듈 폴더 내 (예시: boards) 에 `~.entity.ts` 로 파일 생성한다.
 
-모듈 폴더 내 (예시: boards) 에 `~.entity.ts` 로 파일 생성한다.
+  ```bash
+    # 현재 디렉토리 : 루트 디렉토리
+    $ cd src/boards
+    $ touch board.entity.ts
+  ```
 
-```bash
-  # 현재 디렉토리 : 루트 디렉토리
-  $ cd src/boards
-  $ touch board.entity.ts
-```
+  생성한 _board.entity.ts_ 파일을 작성하자
 
-생성한 _board.entity.ts_ 파일을 작성하자
+  ```ts
+  import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+  import { BoardStatus } from './board.model';
 
-```ts
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { BoardStatus } from './board.model';
+  @Entity()
+  export class Board extends BaseEntity {
+    @PrimaryGeneratedColumn() // Table PK
+    id: number;
 
-@Entity()
-export class Board extends BaseEntity {
-	@PrimaryGeneratedColumn() // Table PK
-	id: number;
+    @Column()
+    title: string;
 
-	@Column()
-	title: string;
+    @Column()
+    description: string;
 
-	@Column()
-	description: string;
+    @Column()
+    status: BoardStatus;
+  }
+  ```
 
-	@Column()
-	status: BoardStatus;
-}
-```
+  ## Foreign Key 설정 (유저와 게시물과의 관계 설정하기)
 
-## NestJS Repository
+  다음과 같이 user.entity.ts, board.entity.ts 를 수정한다.
 
-### Repository 란?
+  _user.entity.ts_
 
-리포지토리는 엔티티 개체와 함께 작동하여 엔티티 찾기, 삽입, 업데이트 등을 함.
-_일종의 pool (인듯)_
+  ```ts
+  export class User extends BaseEntity {
+    @PrimaryGeneratedColumn()
+    id: number;
 
-> Official Documentation : http://typeorm.delighful.studio/classes/_repository_repository_.repository.html
+    @Column()
+    username: string;
 
-DB 관련 작업(INSERT, FIND, DELETE 등) 을 `Service` 가 아닌 `Repository` 에서 해주게 됨.
-이것을 `Repository Pattern` 이라고 부름.
+    @Column()
+    password: string;
 
-### Repository 생성하기
+    // 첫번째 인수 : 변수 타입
+    // 관계 설정하고 싶은 객체 (board) 에서 이 객체(USER) 를 찾으려먼 어떻게 접근하는지 설정해준다
+    // eager 옵션 : 유저 정보 가져올 때 관계 된 엔티티 정보도 가져오는가? t/f (board 정보도 가져오는가)
+    @OneToMany((type) => Board, (board) => board.user, { eager: false })
+    boards: Board[];
+  }
+  ```
 
-1. 리포지토리 파일 생성
+  _board.entity.ts_
 
-```bash
-  # 현재 디렉토리 : 루트 디렉토리
-  $ cd src/boards
-  $ touch board.repository.ts
-```
+  ```ts
+    @ManyToOne((type) => User, (user) => user.boards, { eager: true })
+    user: User;
+  ```
 
-2. 생성한 파일에 리포지토리 클래스 생성. 생성 시 _Repository_ 클래스를 반드시 상속할 것
+  이렇게 설정 한 후
+  어떻게 유저 정보와 게시물 정보를 서로 활용하는지는 코드를 확인하자.
 
-```ts
-import { EntityRepository, Repository } from 'typeorm';
-import { Board } from './board.entity';
+  - 게시물 생성
+  - 게시물 삭제
+  - 본인 게시물만 들고오기
 
-@EntityRepository(Board)
-export class BoardRepository extends Repository<Board> {
-	// DB 작업
-}
-```
+  세 기능 모두 boards.controller.ts 파일로부터 확인가능하다.
 
-`@EntityRepository` : 클래스를 사용자 정의 저장소로 선언함. 특정 엔티티를 관리하거나 일반 저장소 일 수 있음.
+  ## NestJS Repository
 
-3. 생성한 리포지토리를 다른 곳에서도 사용가능하도록 등록해주자. (예시 : _boards.module.ts_)
+  ### Repository 란?
 
-```ts
-...
-import { BoardRepository } from './board.repository';
+  리포지토리는 엔티티 개체와 함께 작동하여 엔티티 찾기, 삽입, 업데이트 등을 함.
+  _일종의 pool (인듯)_
 
-@Module({
-	imports: [ TypeOrmModule.forFeature([BoardRepository]) ],
-	controllers: [BoardsController],
-	providers: [BoardsService],
-})
-export class BoardsModule {}
-```
+  > Official Documentation : http://typeorm.delighful.studio/classes/_repository_repository_.repository.html
 
-## DB 연동으로 CRUD 구현 - 유튜브/인프런 강의를 따라한 경우만 해당
+  DB 관련 작업(INSERT, FIND, DELETE 등) 을 `Service` 가 아닌 `Repository` 에서 해주게 됨.
+  이것을 `Repository Pattern` 이라고 부름.
 
-위에서 설명되었듯, DB는 이제 엔티티를 이용하게 되므로 model 파일이 필요없다.
-하지만, enum 과 같은 status 관련 정의는 필요하므로 이를 따로 파일로 빼자 ( 동일경로, _board-status.enum.ts_).
-uuid 도 사용하지 않으므로 코드에서 지워주자
-이후 불필요한 경로들을 모두 지워준다.
+  ### Repository 생성하기
 
-- board-status-validation.pipe.ts BoardStatus
-- boards.controller.ts
-- board.entity.ts BoardStatus
-- uuid
+  1. 리포지토리 파일 생성
 
-## 인증모듈 구현 (Auth)
+  ```bash
+    # 현재 디렉토리 : 루트 디렉토리
+    $ cd src/boards
+    $ touch board.repository.ts
+  ```
 
-먼저 인증모듈에 필요한 모듈, 컨트롤러, 서비스를 생성한다
+  2. 생성한 파일에 리포지토리 클래스 생성. 생성 시 _Repository_ 클래스를 반드시 상속할 것
 
-```bash
-  $ nest g module auth
-  $ nest g controller auth --no-spec
-  $ nest g service auth --no-spec
-```
+  ```ts
+  import { EntityRepository, Repository } from 'typeorm';
+  import { Board } from './board.entity';
 
-User 를 위한 엔티티를 생성하자 _user.entity.ts_
+  @EntityRepository(Board)
+  export class BoardRepository extends Repository<Board> {
+    // DB 작업
+  }
+  ```
 
-```ts
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+  `@EntityRepository` : 클래스를 사용자 정의 저장소로 선언함. 특정 엔티티를 관리하거나 일반 저장소 일 수 있음.
 
-@Entity()
-@Unique(['username']) // 유니크 해야할 값을 배열로 지정가능.
-export class User extends BaseEntity {
-	@PrimaryGeneratedColumn()
-	id: number;
+  3. 생성한 리포지토리를 다른 곳에서도 사용가능하도록 등록해주자. (예시 : _boards.module.ts_)
 
-	@Column()
-	username: string;
+  ```ts
+  ...
+  import { BoardRepository } from './board.repository';
 
-	@Column()
-	password: string;
-}
-```
+  @Module({
+    imports: [ TypeOrmModule.forFeature([BoardRepository]) ],
+    controllers: [BoardsController],
+    providers: [BoardsService],
+  })
+  export class BoardsModule {}
+  ```
 
-User 관리를 위한 리포지토리도 생성해주자 _user.repository.ts_
-이후 다른곳에서 사용하기 위해 등록도 해주자
+  ## DB 연동으로 CRUD 구현 - 유튜브/인프런 강의를 따라한 경우만 해당
 
-```ts
-// ========== user.repository.ts ===========
-import { EntityRepository, Repository } from 'typeorm';
-import { User } from './user.entity';
+  위에서 설명되었듯, DB는 이제 엔티티를 이용하게 되므로 model 파일이 필요없다.
+  하지만, enum 과 같은 status 관련 정의는 필요하므로 이를 따로 파일로 빼자 ( 동일경로, _board-status.enum.ts_).
+  uuid 도 사용하지 않으므로 코드에서 지워주자
+  이후 불필요한 경로들을 모두 지워준다.
 
-@EntityRepository(User)
-export class UserRepository extends Repository<User> {}
+  - board-status-validation.pipe.ts BoardStatus
+  - boards.controller.ts
+  - board.entity.ts BoardStatus
+  - uuid
 
-// ========== auth.module.ts ===========
-@Module({
-	imports: [TypeOrmModule.forFeature([UserRepository])],
-	controllers: [AuthController],
-	providers: [AuthSerivce],
-})
-export class AuthModule {}
-```
+  ## 인증모듈 구현 (Auth)
 
-엔티티에서 유니크 해야 할 필드를 지정해주면, (`@Unique([field1, field2...])`)
-이미 있는 데이터를 생성하려는 시도에 대해 500 에러를 던져버린다.
+  먼저 인증모듈에 필요한 모듈, 컨트롤러, 서비스를 생성한다
 
-> NestJS error occured -> 바로 Controller 레벨로 가서 -> 500 Internal Server Error Throwed.
+  ```bash
+    $ nest g module auth
+    $ nest g controller auth --no-spec
+    $ nest g service auth --no-spec
+  ```
 
-따라서 try-catch 문법으로 감싸주어 예외처리를 해주자
+  User 를 위한 엔티티를 생성하자 _user.entity.ts_
 
-```ts
-// user.repository.ts
-async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+  ```ts
+  import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
-        //...전략
+  @Entity()
+  @Unique(['username']) // 유니크 해야할 값을 배열로 지정가능.
+  export class User extends BaseEntity {
+    @PrimaryGeneratedColumn()
+    id: number;
 
-        // User 엔티티에서 유니크 값 처리를 해두면 중복 시 바로 Nest가 500에러를 던져버림.
-        // 따라서 예외처리 필요
-        try {
-            await this.save(user);
-        } catch (err) {
+    @Column()
+    username: string;
 
-            // 이 에러코드는 mariaDB, mysql 에러코드임. pg 등 다른 RDBMS 사용 할 경우 다른 처리 필요
-            if(err.code === 'ER_DUP_ENTRY') {
+    @Column()
+    password: string;
+  }
+  ```
 
-                throw new ConflictException('Already existing user name');
+  User 관리를 위한 리포지토리도 생성해주자 _user.repository.ts_
+  이후 다른곳에서 사용하기 위해 등록도 해주자
 
-            } else {
+  ```ts
+  // ========== user.repository.ts ===========
+  import { EntityRepository, Repository } from 'typeorm';
+  import { User } from './user.entity';
 
-                throw new InternalServerErrorException('Internal Server error occured. Please contact Server Manager');
-            }
-        }
+  @EntityRepository(User)
+  export class UserRepository extends Repository<User> {}
 
-    }
-```
-  </div>
-</detail>
+  // ========== auth.module.ts ===========
+  @Module({
+    imports: [TypeOrmModule.forFeature([UserRepository])],
+    controllers: [AuthController],
+    providers: [AuthSerivce],
+  })
+  export class AuthModule {}
+  ```
 
+  엔티티에서 유니크 해야 할 필드를 지정해주면, (`@Unique([field1, field2...])`)
+  이미 있는 데이터를 생성하려는 시도에 대해 500 에러를 던져버린다.
 
-### 암호화
+  > NestJS error occured -> 바로 Controller 레벨로 가서 -> 500 Internal Server Error Throwed.
+
+  따라서 try-catch 문법으로 감싸주어 예외처리를 해주자
+
+  ```ts
+  // user.repository.ts
+  async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+
+          //...전략
+
+          // User 엔티티에서 유니크 값 처리를 해두면 중복 시 바로 Nest가 500에러를 던져버림.
+          // 따라서 예외처리 필요
+          try {
+              await this.save(user);
+          } catch (err) {
+
+              // 이 에러코드는 mariaDB, mysql 에러코드임. pg 등 다른 RDBMS 사용 할 경우 다른 처리 필요
+              if(err.code === 'ER_DUP_ENTRY') {
+
+                  throw new ConflictException('Already existing user name');
+
+              } else {
+
+                  throw new InternalServerErrorException('Internal Server error occured. Please contact Server Manager');
+              }
+          }
+
+      }
+  ```
+</details>
+
+<details>
+<summary><h2>PrismaORM<h2></summary>
+
+<!--summary 아래 빈칸 공백 두고 내용을 적는공간-->
+자세한 내용은 더보기 버튼으로 가려둘 수 있음
+
+</details>
+
+---
+
+## 암호화
 
 비밀번호를 포함한 민감정보는 암호화 되어야한다.
 회원가입 시 받은 비밀번호를 암호화 하여 DB 에 저장하고,
@@ -735,6 +797,8 @@ import * as bcrypt from 'bcryptjs';
 
     }
 ```
+
+---
 
 ## JWT (JSON Web Token)
 
@@ -932,6 +996,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	}
 ```
 
+---
+
 ## NestJS Custom Decorator
 
 지금 우리는 req 객체 안에 validate 메소드에서 리턴한 유저객체를 포함시키기 위해
@@ -1008,47 +1074,7 @@ import { BoardStatusValidationPipe } from './pipes/board-status-validatin.pipe';
 export class BoardsController {
   // 후략
 ```
-
-## 유저와 게시물과의 관계 설정하기
-
-다음과 같이 user.entity.ts, board.entity.ts 를 수정한다.
-
-_user.entity.ts_
-
-```ts
-export class User extends BaseEntity {
-	@PrimaryGeneratedColumn()
-	id: number;
-
-	@Column()
-	username: string;
-
-	@Column()
-	password: string;
-
-	// 첫번째 인수 : 변수 타입
-	// 관계 설정하고 싶은 객체 (board) 에서 이 객체(USER) 를 찾으려먼 어떻게 접근하는지 설정해준다
-	// eager 옵션 : 유저 정보 가져올 때 관계 된 엔티티 정보도 가져오는가? t/f (board 정보도 가져오는가)
-	@OneToMany((type) => Board, (board) => board.user, { eager: false })
-	boards: Board[];
-}
-```
-
-_board.entity.ts_
-
-```ts
-	@ManyToOne((type) => User, (user) => user.boards, { eager: true })
-	user: User;
-```
-
-이렇게 설정 한 후
-어떻게 유저 정보와 게시물 정보를 서로 활용하는지는 코드를 확인하자.
-
-- 게시물 생성
-- 게시물 삭제
-- 본인 게시물만 들고오기
-
-세 기능 모두 boards.controller.ts 파일로부터 확인가능하다.
+---
 
 ## 로그 남기기
 
@@ -1088,6 +1114,8 @@ bootstrap();
 Logger클래스에 구현된 메소드를 이용해서 로깅을 한다.
 
 > Logger.[log, verbose, warning,...] 등의 방식으로 이용한다.
+
+---
 
 ## 설정(Configuration)
 
