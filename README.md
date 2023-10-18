@@ -27,13 +27,15 @@
 
 ```bash
   $ npm install @nestjs/cli -g
+  # OR
+  $ yarn global add @nestjs/cli
 
 
   # 새로운 프로젝트 명으로 디렉토리 생성하면서 초기세팅
   $ nest new project-name
 
   # 현재 디렉토리를 프로젝트 루트 디렉토리로 사용
-  $ nest new ./
+  $ nest new .
 
 
   # 설치 완료 후 맨 처음부터 시작하고 싶다면 다음과 같이 src 디렉토리로 이동 후 작업을 진행하자
@@ -41,7 +43,7 @@
   $ rm app.controller.spec.ts app.controller.ts app.service.ts
 ```
 
-위 파일들을 rm 명령어를 이용해서 삭제 후 `_app.module.ts_` 파일을 열어 다음과 같이 수정한다.
+위 파일들을 rm 명령어를 이용해서 삭제 후 `app.module.ts` 파일을 열어 다음과 같이 수정한다.
 
 ```typescript
 
@@ -57,16 +59,15 @@
 초기 세팅이 완료되었다면,
 루트 디렉토리를 기준으로 아래에 `node_modules`, `src`, 기타 파일들이 있을 것이다.
 
-- node_modules : 프로젝트에 필요한 의존성 패키지가 설치되어있다.
-- src : 실제 코드 파일이 있는 곳이다. 이곳에서 작업이 이루어진다.
-
-- .eslintrc.js : ESLint 설정파일
-- .gitignore : git 에서 무시해야할 파일 목록
-- .prettierrc : 코드포매터 Prettier 설정들
-- nest-cli.json : nestjs cli 설정들이다.
-- package.json : 프로젝트 메타데이터와 프로젝트에 사용되는 의존성 패키지 목록 등이 정의 되어 있다.
-- README.md : 프로젝트 description 위한 .md 파일
-- tsconfig ~.json : typescript 관련 설정
+- `node_modules` : 프로젝트에 필요한 의존성 패키지가 설치되어있다.
+- `src` : 실제 코드 파일이 있는 곳이다. 이곳에서 작업이 이루어진다.
+- `.eslintrc.js` : ESLint 설정파일
+- `.gitignore` : git 에서 무시해야할 파일 목록
+- `.prettierrc` : 코드포매터 Prettier 설정들
+- `nest-cli.json` : nestjs cli 설정들이다.
+- `package.json` : 프로젝트 메타데이터와 프로젝트에 사용되는 의존성 패키지 목록 등이 정의 되어 있다.
+- `README.md` : 프로젝트 description 위한 .md 파일
+- `tsconfig ~.json` : typescript 관련 설정
 
 이렇게 구성되어 있다.
 앞으로 대부분의 작업은 _src_ 내부에서 이루어진다.
@@ -75,9 +76,9 @@
 
 ### Module 이란?
 
-모듈은 `@Module()` 데코레이터가 사용된 자바스크립트 싱글톤 클래스이다.
-NestJS가 애플리케이션 구조를 구성하는 단위이다.
-밀접히 관련된 기능 집합으로 구성하는 것이 바람직하다.
+모듈은 `@Module()` 데코레이터가 사용된 자바스크립트 싱글톤 클래스이다.  
+NestJS가 `애플리케이션 구조를 구성하는 단위`이다.  
+밀접히 관련된 기능 집합으로 구성하는 것이 바람직하다.  
 따라서 각 애플리케이션에는 하나 이상의 모듈(루트 모듈)이 존재하게 된다.
 후술할 _controller_, _service_, _entity_ 등을 모아서 관리하게 된다.
 
@@ -139,9 +140,9 @@ export class BoardsController {}
   # --no-spec 옵션은 테스트 위한 소스코드 생성을 하지 않겠다는 의미
 ```
 
-생성이 완료 된 후 컨트롤러를 사용하기 위해선 컨트롤러를 사용할 모듈에 등록해 주어야 한다.
+생성이 완료 된 후 컨트롤러를 사용하기 위해선 컨트롤러를 사용할 모듈에 등록해 주어야 한다.  
 마찬가지로 명령어로 생성 시 자동으로 등록이 되나, 그렇지 않다면 등록해준다.
-예시에서는 Boards 모듈이었으니 생성했던 _boards.module.ts_ 에 다음과 같이 등록해주자.
+예시에서는 `Boards` 모듈이었으니 생성했던 _boards.module.ts_ 에 다음과 같이 등록해주자.
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -410,7 +411,10 @@ export class BoardStatusValidationPipe implements PipeTransform {
 }
 ```
 
-## NestJS TypeORM (Object Relational Mapping)
+# Develop with Database
+
+<detail>
+  <summary><h3>TypeORM</h3></summary>
 
 ### ORM 이란?
 
@@ -679,6 +683,9 @@ async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
 
     }
 ```
+  </div>
+</detail>
+
 
 ### 암호화
 
